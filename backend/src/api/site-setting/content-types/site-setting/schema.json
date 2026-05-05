@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "site setting"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "themes": {
+      "type": "enumeration",
+      "default": "vintage (default)",
+      "enum": [
+        "vintage (default)",
+        "pinky",
+        "blues",
+        "halloween",
+        "christmas"
+      ]
+    }
+  }
+}

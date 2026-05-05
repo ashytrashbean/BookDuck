@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.16.0/dist/axios.min.js"></script>
+    <script src="code.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Profile</title>
+</head>
+<body>
+    <header>
+        <a href="./home.html">
+            <h2>BookDuck</h2>
+        </a>
+        <div class="headIcons">
+            <span class="usersName">Full Name</span>
+            <a title="Profile">Profile</a>
+            <a title="LogOut" id="logoutBtn">LogOut</a>
+        </div>
+    </header>
+
+    <section>
+        <img src="" alt="">
+        <h2 class="usersName"> </h2>
+    </section>
+    
+    <h3>TBR List</h3>
+    <select name="filter" id="tbrFilter" title="Filter TBR books">
+        <option hidden>Sort By</option>
+        <option value="title">Title</option>
+        <option value="author">Author</option>
+    </select>
+    <div id="tbrDiv"></div>
+
+    <h3>Rated Books</h3>
+    <div id="ratedDiv"></div>
+</body>
+</html>
