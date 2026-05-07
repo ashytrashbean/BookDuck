@@ -5,59 +5,118 @@
     font-family: sans-serif;
 }
 
+:root,body[data-theme="default"]{
+    --header-bg: #b89782;
+    --body-bg: #fce5d3;
+    --boxes: #dcccc3;
+}
+
+body[data-theme="christmas"]{
+    --header-bg: #497647;
+    --body-bg: #ff4c39;
+    --boxes: #b3c6b6;
+}
+body[data-theme="halloween"]{
+    --header-bg: #871bb2;
+    --body-bg: #3c3f48;
+    --boxes: #c1b3c6;
+}
+body[data-theme="easter"]{
+    --header-bg: #d68fe8;
+    --body-bg: #b9daff;
+    --boxes: #c3b3c6;
+}
+body[data-theme="pinky"]{
+    --header-bg: #f13a87;
+    --body-bg: #ffcde2;
+    --boxes: #c6b3c2;
+}
+
+a{
+    color: #000;
+    text-decoration: none;
+}
+
+a:hover{
+    background-color: #ffffffaf;
+    border-radius: 15px;
+}
+
+button{
+    border-style: none;
+    background-color: var(--header-bg);
+    padding: 10px;
+    margin: 10px;
+    font-weight: bolder;
+    border-radius: 8px;
+    box-shadow: 5px 3px 8px #05050545;
+}
+button:hover{
+    border: solid black 3px;
+}
+
 header{
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    background-color: #b89782;
+    background-color: var(--header-bg);
     padding: 30px 15px;
     gap: 20px;
 }
 
+body{
+    background-color: var(--body-bg);
+}
 
 
 #logoutBtn{
     cursor: pointer;
 }
-#logoutBtn:hover{
-    background-color: aliceblue;
-}
 
 .headIcons{
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 20px;
     padding: 0 20px;
 }
 
 #logReg{
-    height: 85vh;
+    /* height: 85vh; */
     margin: 30px;
-    padding: 30px 15px;
+    padding: 30px 55px;
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    text-align: center;
+    justify-content: space-around;
+    align-items: stretch;
     line-height: 40px;
-    background-color: #c6bab3;
+    background-color: var(--boxes);
     gap: 30px;
     flex-wrap: wrap;
     border-radius: 8px;
+}
+#logReg h2{
+    text-align: center;
+}
+input, select{
+    padding: 5px;
+    border-radius: 5px;
 }
 
 section{
     display: flex;
     height: 100px;
+    justify-content: center;
     align-items: center;
     padding: 15px;
     margin: 10px 0px;
-    background-color: #c6bab3;
+    background-color: var(--boxes);
 }
 
 .userBooks{
     display: flex;
-    /* justify-content: space-around; */
+    justify-content: space-around;
     flex-wrap: wrap;
-    /* gap: 15px; */
+    /* gap: 45px; */
     padding: 20px;
 }
 
@@ -78,7 +137,8 @@ section{
     gap: 10px;
     padding: 10px;
     width: 250px;
-    border-radius: 8px;
+    border-radius: 5px;
+    background-color: white;
 }
 .bookCard img{
     object-fit: cover;
@@ -87,4 +147,22 @@ section{
 .bookCard span{
     font-size: smaller;
     color: #515151;
+}
+
+#adminSection{
+    margin: 30px;
+    padding: 30px 0;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }

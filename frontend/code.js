@@ -1,5 +1,41 @@
 const baseUrl = "http://localhost:1337";
 
+async function showAdmin(user){
+    if(user.role === "Admin" || user.username === "admin"){
+        document.querySelector('#adminSelection').style.display = "flex";
+    }else{
+        document.querySelector('#adminSelection').style.display = "none";
+    }
+}
+
+async function uploadBook(event) {
+    event.preventDefault();
+
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+
+    const data = {
+        title: document.querySelector("#bookTitle").value,
+        author: document.querySelector("#bookAuthor").value,
+    };
+
+    const imageFile = document.querySelector("#bookCover").files[0];
+    formData.append("files.cover", imageFile, imageFile.name);
+    formData.append("data", JSON.stringify(data));
+
+    try{
+        await axios.post(`${baseUrl}/api/books`, formData, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "multipart/form-data" 
+            }
+        });
+        alert("Book uploaded successfully!")
+    }catch(error){
+        console.error("Upload Failed: ", error);
+    }
+}
 
 async function registerUser() {
     let regUsername = document.querySelector("#regUsername").value;
@@ -27,7 +63,7 @@ async function loginUser() {
     let response = await axios.post(`${baseUrl}/api/auth/local/`, loggedUser).then(response=>{
         localStorage.setItem("token", response.data.jwt)
         if(response.status === 200){
-        window.location.href = "home.html"
+            window.location.href = "home.html"
         } else{
             alert("Either you dont have an account or you wrote something wrong")
         }
@@ -37,7 +73,6 @@ async function loginUser() {
         console.log(error.response);
     });
 }
-
 
 async function renderBooks() {
     let response = await axios.get(`${baseUrl}/api/books?populate[reviews][populate]=*&populate[cover][populate]=*`);
@@ -178,17 +213,14 @@ async function addRating(bookID) {
 }
 
 async function renderProfile(sortBy = "title", ratedSort = "rating") {
-    
-    // console.log(response);
-
-    
 
     let response = await axios.get(`${baseUrl}/api/users/me?populate[tbr_list][populate]=*&populate[reviews][populate][book][populate]=*`,{
         headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}
     });
 
     if(response.status === 200){
-        const user = response. data;
+        const user = response.data;
+        showAdmin(user)
 
         let myBooks = user.tbr_list || [];
     
@@ -233,8 +265,6 @@ async function renderProfile(sortBy = "title", ratedSort = "rating") {
         });
     }
 }
-
-
 
 async function updateHeaderNames(token){
     // const token = localStorage.getItem("token")
@@ -308,5 +338,19 @@ function checkLogIn(){
         updateHeaderNames(token);
     }
 }
+
+async function checkTheme() {
+    try{
+        const response = await axios.get(`${baseUrl}/api/site-setting`);
+        console.log(response)
+        const activeTheme = response.data.data.themes;
+
+        document.body.setAttribute('data-theme', activeTheme);
+    } catch (error){
+        console.error("Could not load theme:", error);
+    }
+}
+
+checkTheme()
 
 checkLogIn()

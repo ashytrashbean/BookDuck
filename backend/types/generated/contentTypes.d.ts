@@ -507,7 +507,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
     singularName: 'site-setting';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
