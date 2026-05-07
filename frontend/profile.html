@@ -21,19 +21,34 @@
     </header>
 
     <section>
-        <img src="" alt="">
+        <img src="" alt="" height="50px">
         <h2 class="usersName"> </h2>
     </section>
     
-    <h3>TBR List</h3>
-    <select name="filter" id="tbrFilter" title="Filter TBR books">
-        <option hidden>Sort By</option>
-        <option value="title">Title</option>
-        <option value="author">Author</option>
-    </select>
-    <div id="tbrDiv"></div>
+    <div class="userBooks">
 
-    <h3>Rated Books</h3>
-    <div id="ratedDiv"></div>
+        <div>
+            <h3>TBR List</h3> <br> 
+            <select name="filter" id="tbrFilter" title="Filter TBR books">
+                <option hidden>Sort By</option>
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+            </select> 
+            <div id="tbrDiv"></div>
+        </div>
+        
+
+        <div >
+            <h3>Rated Books</h3> <br>
+            <select id="ratedFilter" title="Sort your ratings">
+                <option value="rating">Sort By: Highest Rating</option>
+                <option value="title">Sort By: Title</option>
+                <option value="author">Sort By: Author</option>
+            </select>
+            <div id="ratedDiv"></div>   
+        </div>
+        
+    </div>
+    
 </body>
 </html>

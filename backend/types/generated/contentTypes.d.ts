@@ -438,7 +438,7 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     singularName: 'book';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     author: Schema.Attribute.String;
@@ -453,6 +453,8 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     release_date: Schema.Attribute.String;
     reviews: Schema.Attribute.Relation<'oneToMany', 'api::review.review'>;
+    series_name: Schema.Attribute.String;
+    series_number: Schema.Attribute.Integer;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -472,7 +474,7 @@ export interface ApiReviewReview extends Struct.CollectionTypeSchema {
     singularName: 'review';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     book: Schema.Attribute.Relation<'manyToOne', 'api::book.book'>;
@@ -997,6 +999,7 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

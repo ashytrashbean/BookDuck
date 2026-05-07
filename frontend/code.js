@@ -40,7 +40,7 @@ async function loginUser() {
 
 
 async function renderBooks() {
-    let response = await axios.get(`${baseUrl}/api/books?populate=*`);
+    let response = await axios.get(`${baseUrl}/api/books?populate[reviews][populate]=*&populate[cover][populate]=*`);
     let books = response.data.data;
 
     const isLoggedIn = localStorage.getItem("token") !== null;
@@ -50,17 +50,35 @@ async function renderBooks() {
 
     books.forEach(book => {
 
+        const reviews = book.reviews || [];
+        let avgRating = 0;
+
+        if(reviews.length > 0) {
+            const sum = reviews.reduce((acc, rev) => acc + rev.rating, 0);
+            avgRating = (sum / reviews.length).toFixed(1);
+        }
+        
+        const ratingUI = isLoggedIn ? `
+            <div class="rating-box">
+                <select id="rating-${book.documentId}">
+                    ${[1,2,3,4,5,6,7,8,9,10].map(num => `<option value="${num}">${num}</option>`).join('')}
+                </select>
+                <button onclick="addRating('${book.documentId}')">Rate</button>
+            </div>` : "";
+
         const saveButton = isLoggedIn
-        ? `<button type="button" onclick="saveBook('${book.documentId}')">Save to TBR</button>`
-        : ``;
+            ? `<button type="button" onclick="saveBook('${book.documentId}')">Save to TBR</button>`
+            : ``;
 
         bookContainer.innerHTML += `
         <div class="bookCard">
-        <span>${book.author}</span>
+        <img src="${baseUrl}${book.cover?.url}" height="280"> <br>
         <h3>${book.title}</h3>
-        <img src="${baseUrl}${book.cover?.url}" height="200"> <br>
-        <span><strong>Pages:</strong> ${book.pages}</span>
-        <span><strong>Released:</strong> ${book.release_date}</span>
+        <span>${book.author}</span>
+        <span>${book.pages} pages</span>
+        <span>released: ${book.release_date}</span>
+        <span>Avg Rating: ⭐ ${avgRating} (${reviews.length})</span>
+        ${ratingUI}
         ${saveButton}
         </div>`
     });
@@ -131,36 +149,57 @@ async function removeBook(bookID) {
 
 }
 
+async function addRating(bookID) {
+    const token = localStorage.getItem("token");
+    const score = document.querySelector(`#rating-${bookID}`).value;
 
-
-async function renderProfile(sortBy = "title") {
-    let response = await axios.get(`${baseUrl}/api/users/me`,{
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
+    const userRes = await axios.get(`${baseUrl}/api/users/me`, {
+        headers: {"Authorization": `Bearer ${token}`}
     });
 
+    const myUserId = userRes.data.documentId;
+
+    try{
+        axios.post(`${baseUrl}/api/reviews`,{
+            data: {
+                rating : parseInt(score),
+                book: bookID,
+                user: myUserId
+            }
+        },{
+            headers: {"Authorization": `Bearer ${token}`}
+        });
+        alert("rating submitted");
+        location.reload();
+    } catch(error){
+        console.error("rating failed:", error.response?.data);
+        alert("You might have rated this book already");
+    }
+}
+
+async function renderProfile(sortBy = "title", ratedSort = "rating") {
+    
     // console.log(response);
 
+    
+
+    let response = await axios.get(`${baseUrl}/api/users/me?populate[tbr_list][populate]=*&populate[reviews][populate][book][populate]=*`,{
+        headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}
+    });
+
     if(response.status === 200){
+        const user = response. data;
 
-        let tbr = await axios.get(`${baseUrl}/api/users/me?populate[tbr_list][populate]=cover`,{
-            headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}
-        });
-
-        let myBooks = tbr.data.tbr_list;
-        
-        const uniqueBooks = myBooks.filter((book,index,self)=>
-        index===self.findIndex((b)=>b.documentId === book.documentId));
-
-        uniqueBooks.sort((a,b)=>{
-            return a[sortBy].localeCompare(b[sortBy],'sv')
-        })
+        let myBooks = user.tbr_list || [];
+    
+        if (sortBy === "title" || sortBy === "author") {
+            myBooks.sort((a, b) => a[sortBy].localeCompare(b[sortBy], 'sv'));
+        }
 
         let tbrContainer = document.querySelector('#tbrDiv');
         tbrContainer.innerHTML = "";
 
-        uniqueBooks.forEach(book => {
+        myBooks.forEach(book => {
             tbrContainer.innerHTML += `
             <div class="bookCard">
             <span>${book.author}</span>
@@ -172,6 +211,26 @@ async function renderProfile(sortBy = "title") {
             </div>`
         });
 
+        let myReviews = user.reviews || [];
+
+        if (ratedSort === "rating") {
+            myReviews.sort((a, b) => b.rating - a.rating);
+        } else if (ratedSort === "title" || ratedSort === "author") {
+            myReviews.sort((a, b) => {
+                return a.book[ratedSort].localeCompare(b.book[ratedSort], 'sv');
+            });
+        }
+
+        let ratedContainer = document.querySelector('#ratedDiv');
+        ratedContainer.innerHTML = "";
+        myReviews.forEach(rev => {
+            ratedContainer.innerHTML += `
+                <div class="bookCard">
+                    <span>${rev.book.author}</span>
+                    <h3>${rev.book.title}</h3>
+                    <p>Your Rating: ⭐ ${rev.rating}/10</p>
+                </div>`
+        });
     }
 }
 
@@ -222,6 +281,14 @@ function checkLogIn(){
         })
     }
 
+    const ratedFilter = document.querySelector("#ratedFilter");
+    if (ratedFilter) {
+        ratedFilter.addEventListener('change', (event) => {
+            const currentTBRSort = document.querySelector("#tbrFilter").value;
+            renderProfile(currentTBRSort, event.target.value);
+        });
+    }
+
     const logOut = document.querySelector("#logoutBtn");
     if(logOut){
         logOut.addEventListener('click',()=>{
@@ -242,4 +309,4 @@ function checkLogIn(){
     }
 }
 
-checkLogIn();
+checkLogIn()

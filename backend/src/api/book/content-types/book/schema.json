@@ -7,7 +7,7 @@
     "displayName": "Book"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -44,6 +44,12 @@
       "relation": "oneToMany",
       "target": "api::review.review",
       "mappedBy": "book"
+    },
+    "series_name": {
+      "type": "string"
+    },
+    "series_number": {
+      "type": "integer"
     }
   }
 }
