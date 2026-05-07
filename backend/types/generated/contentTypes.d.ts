@@ -521,7 +521,7 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     themes: Schema.Attribute.Enumeration<
-      ['vintage (default)', 'pinky', 'blues', 'halloween', 'christmas']
+      ['vintage (default)', 'pinky', 'easter', 'halloween', 'christmas']
     > &
       Schema.Attribute.DefaultTo<'vintage (default)'>;
     updatedAt: Schema.Attribute.DateTime;

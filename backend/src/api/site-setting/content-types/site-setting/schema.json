@@ -17,7 +17,7 @@
       "enum": [
         "vintage (default)",
         "pinky",
-        "blues",
+        "easter",
         "halloween",
         "christmas"
       ]
