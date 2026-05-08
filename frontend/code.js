@@ -1,10 +1,13 @@
 const baseUrl = "http://localhost:1337";
 
 async function showAdmin(user){
-    if(user.role === "Admin" || user.username === "admin"){
-        document.querySelector('#adminSelection').style.display = "flex";
+    const adminDiv = document.querySelector('#adminSection');
+    if(!adminDiv) return;
+
+    if(user.role?.name === "Admin" && user.username === "admin"){
+        document.querySelector('#adminSection').style.display = "flex";
     }else{
-        document.querySelector('#adminSelection').style.display = "none";
+        document.querySelector('#adminSection').style.display = "none";
     }
 }
 
@@ -15,25 +18,34 @@ async function uploadBook(event) {
 
     const formData = new FormData();
 
-    const data = {
+    const bookData = {
         title: document.querySelector("#bookTitle").value,
         author: document.querySelector("#bookAuthor").value,
     };
 
-    const imageFile = document.querySelector("#bookCover").files[0];
-    formData.append("files.cover", imageFile, imageFile.name);
-    formData.append("data", JSON.stringify(data));
+    formData.append("data", JSON.stringify(bookData));
+    // const blob = new Blob(
+    //     [JSON.stringify(bookData)],
+    //     {type: 'application/json'}
+    // );
+
+    // formData.append("data", blob);
+
+    const fileInput = document.querySelector("#bookCover");
+    if(fileInput.files.length > 0){
+        const imageFile = fileInput.files[0];
+        formData.append("files.cover", imageFile, imageFile.name);
+    }
 
     try{
         await axios.post(`${baseUrl}/api/books`, formData, {
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "multipart/form-data" 
+                "Authorization": `Bearer ${token}`
             }
         });
         alert("Book uploaded successfully!")
     }catch(error){
-        console.error("Upload Failed: ", error);
+        console.error("Upload Failed: ", error.response.data.error.message);
     }
 }
 
@@ -214,12 +226,14 @@ async function addRating(bookID) {
 
 async function renderProfile(sortBy = "title", ratedSort = "rating") {
 
-    let response = await axios.get(`${baseUrl}/api/users/me?populate[tbr_list][populate]=*&populate[reviews][populate][book][populate]=*`,{
+    let response = await axios.get(`${baseUrl}/api/users/me?populate[tbr_list][populate]=*&populate[reviews][populate][book][populate]=*&populate[role][populate]=*`,{
         headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}
     });
 
     if(response.status === 200){
         const user = response.data;
+
+        console.log("Current User: ", user)
         showAdmin(user)
 
         let myBooks = user.tbr_list || [];
@@ -230,6 +244,8 @@ async function renderProfile(sortBy = "title", ratedSort = "rating") {
 
         let tbrContainer = document.querySelector('#tbrDiv');
         tbrContainer.innerHTML = "";
+
+        console.log(myBooks)
 
         myBooks.forEach(book => {
             tbrContainer.innerHTML += `
@@ -331,6 +347,11 @@ function checkLogIn(){
     if(logBtn){
         logBtn.addEventListener('click',loginUser);
         document.querySelector("#regBtn").addEventListener('click', registerUser);
+    }
+
+    const uploadForm = document.querySelector('#uploadForm');
+    if(uploadForm){
+        uploadForm.addEventListener('submit', uploadBook)
     }
 
     const token = localStorage.getItem("token");
