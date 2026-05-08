@@ -58,7 +58,7 @@ button:hover{
 header{
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     background-color: var(--header-bg);
     padding: 30px 15px;
     gap: 20px;

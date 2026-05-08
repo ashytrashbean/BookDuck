@@ -13,39 +13,40 @@ async function showAdmin(user){
 
 async function uploadBook(event) {
     event.preventDefault();
-
     const token = localStorage.getItem("token");
 
-    const formData = new FormData();
-
-    const bookData = {
-        title: document.querySelector("#bookTitle").value,
-        author: document.querySelector("#bookAuthor").value,
-    };
-
-    formData.append("data", JSON.stringify(bookData));
-    // const blob = new Blob(
-    //     [JSON.stringify(bookData)],
-    //     {type: 'application/json'}
-    // );
-
-    // formData.append("data", blob);
-
-    const fileInput = document.querySelector("#bookCover");
-    if(fileInput.files.length > 0){
-        const imageFile = fileInput.files[0];
-        formData.append("files.cover", imageFile, imageFile.name);
-    }
-
     try{
-        await axios.post(`${baseUrl}/api/books`, formData, {
+        let coverId = null;
+        const fileInput = document.querySelector("#bookCover");
+        if(fileInput.files.length > 0){
+            const imageFormData = new FormData();
+            imageFormData.append("files", fileInput.files[0]);
+
+            const imageResponse = await axios.post(`${baseUrl}/api/upload`, imageFormData, {
+                headers: {"Authorization" : `Bearer ${token}`}
+            });
+            coverId = imageResponse.data[0].id
+        }
+
+        const bookPayload = {
+            data: {
+                title: document.querySelector("#bookTitle").value,
+                author: document.querySelector("#bookAuthor").value,
+                pages: document.querySelector("#bookPages").value,
+                release_date: document.querySelector("#bookRelease").value,
+                cover: coverId
+            }
+        };
+
+        await axios.post(`${baseUrl}/api/books`, bookPayload, {
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
             }
         });
         alert("Book uploaded successfully!")
     }catch(error){
-        console.error("Upload Failed: ", error.response.data.error.message);
+        console.error("Upload Failed: ", error.response?.data || error.message);
     }
 }
 
@@ -233,7 +234,6 @@ async function renderProfile(sortBy = "title", ratedSort = "rating") {
     if(response.status === 200){
         const user = response.data;
 
-        console.log("Current User: ", user)
         showAdmin(user)
 
         let myBooks = user.tbr_list || [];
@@ -244,8 +244,6 @@ async function renderProfile(sortBy = "title", ratedSort = "rating") {
 
         let tbrContainer = document.querySelector('#tbrDiv');
         tbrContainer.innerHTML = "";
-
-        console.log(myBooks)
 
         myBooks.forEach(book => {
             tbrContainer.innerHTML += `
@@ -363,10 +361,24 @@ function checkLogIn(){
 async function checkTheme() {
     try{
         const response = await axios.get(`${baseUrl}/api/site-setting`);
-        console.log(response)
         const activeTheme = response.data.data.themes;
 
         document.body.setAttribute('data-theme', activeTheme);
+
+        const logo = document.querySelector("#logoImg");
+        if(logo){
+            if(activeTheme === "vintage (default)"){
+                logo.src = "./icons/bookDuck.png"
+            } else if (activeTheme === "pinky"){
+                logo.src = "./icons/bookDuck_pinky.png"
+            } else if (activeTheme === "easter"){
+                logo.src = "./icons/bookDuck_easter.png"
+            } else if (activeTheme === "halloween"){
+                logo.src = "./icons/bookDuck_spooky.png"
+            } else if (activeTheme === "christmas"){
+                logo.src = "./icons/bookDuck_santa.png"
+            }
+        }
     } catch (error){
         console.error("Could not load theme:", error);
     }

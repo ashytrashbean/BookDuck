@@ -10,7 +10,8 @@
 </head>
 <body>
     <header>
-        <a href="./home.html">
+        <a href="./home.html" class="headIcons">
+            <img id="logoImg" alt="a duck behing a book logo" height="90px">
             <h2>BookDuck</h2>
         </a>
         <div class="headIcons">
@@ -30,8 +31,10 @@
         <form id="uploadForm">
             <input type="text" id="bookTitle" placeholder="Book Title" required> <br>
             <input type="text" id="bookAuthor" placeholder="Author" required> <br>
+            <input type="number" id="bookPages" placeholder="Book's amount of pages"><br>
+            <input type="text" id="bookRelease" placeholder="Book's release date in: dd/mm/yy"> <br>
             <label for="bookCover">Cover Image:</label> 
-            <input type="file" id="bookCover" accept="image/*"> <br>
+            <input type="file" id="bookCover" > <br>
             <button type="submit">Publish Book</button>
         </form>
     </div>
