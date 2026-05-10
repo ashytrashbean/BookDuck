@@ -1,4 +1,5 @@
-const baseUrl = "http://localhost:1337";
+// const baseUrl = "http://localhost:1337";
+const baseUrl = "https://honorable-broccoli-2573da6fef.strapiapp.com";
 
 async function showAdmin(user){
     const adminDiv = document.querySelector('#adminSection');
