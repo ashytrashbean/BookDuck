@@ -1,5 +1,4 @@
-// const baseUrl = "http://localhost:1337";
-const baseUrl = "http://honorable-broccoli-2573da6fef";
+const baseUrl = "http://localhost:1337";
 
 async function showAdmin(user){
     const adminDiv = document.querySelector('#adminSection');
