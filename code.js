@@ -121,7 +121,7 @@ async function renderBooks() {
 
         bookContainer.innerHTML += `
         <div class="bookCard">
-        <img src="${baseUrl}${book.cover?.url}" height="280"> <br>
+        <img src="${book.cover?.url?.startsWith('http') ? book.cover.url : baseUrl + book.cover?.url}" height="280"> <br>
         <h3>${book.title}</h3>
         <span>${book.author}</span>
         <span>${book.pages} pages</span>
@@ -251,7 +251,7 @@ async function renderProfile(sortBy = "title", ratedSort = "rating") {
             <div class="bookCard">
             <span>${book.author}</span>
             <h3>${book.title}</h3>
-            <img src="${baseUrl}${book.cover?.url}" height="100"> <br>
+            <img src="${book.cover?.url?.startsWith('http') ? book.cover.url : baseUrl + book.cover?.url}" height="100"> <br>
             <span><strong>Pages:</strong> ${book.pages}</span>
             <span><strong>Released:</strong> ${book.release_date}</span>
             <button type="button" onclick="removeBook('${book.documentId}')">Remove from TBR</button>
